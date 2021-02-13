@@ -1,0 +1,180 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/phantom/EasyGameCloud/src/IdentityServer/IdentityServer.csproj": {}
+  },
+  "projects": {
+    "/home/phantom/EasyGameCloud/src/Identity.Plugin/Identity.Plugin.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/phantom/EasyGameCloud/src/Identity.Plugin/Identity.Plugin.csproj",
+        "projectName": "Identity.Plugin",
+        "projectPath": "/home/phantom/EasyGameCloud/src/Identity.Plugin/Identity.Plugin.csproj",
+        "packagesPath": "/home/phantom/.nuget/packages/",
+        "outputPath": "/home/phantom/EasyGameCloud/src/Identity.Plugin/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/phantom/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.78, )"
+            },
+            "Dapper.FluentMap": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Dapper.SqlBuilder": {
+              "target": "Package",
+              "version": "[2.0.78, )"
+            },
+            "IdentityServer4": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            },
+            "Microsoft.Extensions.Identity.Core": {
+              "target": "Package",
+              "version": "[3.1.5, )"
+            },
+            "Microsoft.Extensions.Identity.Stores": {
+              "target": "Package",
+              "version": "[3.1.5, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[5.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.10, 3.1.10]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.103/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/phantom/EasyGameCloud/src/IdentityServer/IdentityServer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/phantom/EasyGameCloud/src/IdentityServer/IdentityServer.csproj",
+        "projectName": "IdentityServer",
+        "projectPath": "/home/phantom/EasyGameCloud/src/IdentityServer/IdentityServer.csproj",
+        "packagesPath": "/home/phantom/.nuget/packages/",
+        "outputPath": "/home/phantom/EasyGameCloud/src/IdentityServer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/phantom/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "/home/phantom/EasyGameCloud/src/Identity.Plugin/Identity.Plugin.csproj": {
+                "projectPath": "/home/phantom/EasyGameCloud/src/Identity.Plugin/Identity.Plugin.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.78, )"
+            },
+            "Dapper.FluentMap": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Dapper.SqlBuilder": {
+              "target": "Package",
+              "version": "[2.0.78, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[5.0.2, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[5.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.103/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
