@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace AccountService
+namespace PlayerAuthenticatorService
 {
     public class Startup
     {
@@ -29,7 +29,7 @@ namespace AccountService
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "AccountService", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "PlayerAuthenticatorService", Version = "v1"});
             });
         }
 
@@ -40,7 +40,7 @@ namespace AccountService
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AccountService v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PlayerAuthenticatorService v1"));
             }
 
             app.UseHttpsRedirection();
