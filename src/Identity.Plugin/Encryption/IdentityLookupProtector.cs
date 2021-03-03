@@ -7,7 +7,7 @@ using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
 
-namespace Identity.Plugin.PersonalDataProtector
+namespace Identity.Plugin
 {
     public class IdentityLookupProtector : ILookupProtector
     {

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace AccountService
+namespace CustomerService
 {
     public class Startup
     {
@@ -30,16 +30,11 @@ namespace AccountService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddOptions();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CustomerService", Version = "v1"});
             });
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddUserStore<CustomUserStore<ApplicationUser>>()
-                .AddRoleStore<CustomRoleStore>();
-            services.AddScoped<UserManager<ApplicationUser>>();
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +47,6 @@ namespace AccountService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CustomerService v1"));
             }
 
-            // app.UseHttpsRedirection();
             app.UseRouting();
             
             app.UseAuthentication();

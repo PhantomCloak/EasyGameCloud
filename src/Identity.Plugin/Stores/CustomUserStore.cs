@@ -24,11 +24,13 @@ namespace Identity.Plugin.Stores
         where TUser : ApplicationUser
     {
         private readonly IIdentityUserRepository<TUser> _userRepository;
+        public IdentityOptions Options { get; set; }
 
         public CustomUserStore(
-            IIdentityUserRepository<TUser> userRepository)
+            IIdentityUserRepository<TUser> userRepository, IdentityOptions options)
         {
             _userRepository = userRepository;
+            Options = options;
         }
 
         public void Dispose()
@@ -64,7 +66,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.UserName);
         }
 
-        public async Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
+        public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -74,7 +76,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.UserName = userName;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
@@ -89,7 +91,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.NormalizedUserName);
         }
 
-        public async Task SetNormalizedUserNameAsync(TUser user, string normalizedName,
+        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -101,7 +103,7 @@ namespace Identity.Plugin.Stores
 
             user.UserName = user.UserName;
             user.NormalizedUserName = normalizedName;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
@@ -379,7 +381,7 @@ namespace Identity.Plugin.Stores
             return users.ToList();
         }
 
-        public async Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -389,8 +391,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.PasswordHash = passwordHash;
-
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public async Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
@@ -419,7 +420,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(string.IsNullOrEmpty(user.PasswordHash));
         }
 
-        public async Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
+        public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -429,7 +430,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.SecurityStamp = stamp;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public async Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
@@ -449,7 +450,7 @@ namespace Identity.Plugin.Stores
             return actor.SecurityStamp;
         }
 
-        public async Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
+        public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -459,9 +460,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.Email = email;
-
-            if (!string.IsNullOrEmpty(user.Id))
-                await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
@@ -488,7 +487,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.IsEmailVerified);
         }
 
-        public async Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -498,8 +497,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.IsEmailVerified = confirmed;
-            if (!string.IsNullOrEmpty(user.Id))
-                await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
@@ -527,7 +525,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.NormalizedEmail);
         }
 
-        public async Task SetNormalizedEmailAsync(TUser user, string normalizedEmail,
+        public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -537,11 +535,8 @@ namespace Identity.Plugin.Stores
                 throw new ArgumentNullException("The user parameter is null or incorrect.");
             }
 
-            user.Email = user.Email;
             user.NormalizedEmail = normalizedEmail;
-
-            if (!string.IsNullOrEmpty(user.Id))
-                await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken)
@@ -556,7 +551,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.LockoutEndDate);
         }
 
-        public async Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd,
+        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -567,9 +562,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.LockoutEndDate = lockoutEnd;
-
-            if (!string.IsNullOrEmpty(user.Id))
-                await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public async Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
@@ -590,7 +583,7 @@ namespace Identity.Plugin.Stores
             return usr.AccessFailedCount;
         }
 
-        public async Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        public Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -600,9 +593,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.AccessFailedCount = 0;
-
-            if (!string.IsNullOrEmpty(user.Id))
-                await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public async Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
@@ -633,7 +624,7 @@ namespace Identity.Plugin.Stores
             return usr.IsLockoutEnabled;
         }
 
-        public async Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+        public Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -643,10 +634,10 @@ namespace Identity.Plugin.Stores
             }
 
             user.IsLockoutEnabled = enabled;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
-        public async Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
+        public Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -656,7 +647,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.PhoneNumber = phoneNumber;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
 
         public Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken)
@@ -683,7 +674,7 @@ namespace Identity.Plugin.Stores
             return Task.FromResult(user.IsPhoneNumberVerified);
         }
 
-        public async Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -693,7 +684,7 @@ namespace Identity.Plugin.Stores
             }
 
             user.IsPhoneNumberVerified = confirmed;
-            await _userRepository.UpdateUserAsync(user);
+            return Task.CompletedTask;
         }
     }
 }

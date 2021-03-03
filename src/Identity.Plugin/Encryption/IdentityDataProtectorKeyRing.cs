@@ -8,17 +8,18 @@ using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 
-namespace Identity.Plugin.PersonalDataProtector
+namespace Identity.Plugin
 {
     public class IdentityDataProtectorKeyRing : ILookupProtectorKeyRing
     {
         private readonly IDictionary<string, string> _keyDictionary = new Dictionary<string, string>();
 
-        public IdentityDataProtectorKeyRing(IHostingEnvironment hostingEnvironment)
+        public IdentityDataProtectorKeyRing()
         {
-            // Create the keyring directory if one doesn't exist.
-            var keyRingDirectory = Path.Combine(hostingEnvironment.ContentRootPath, "keyring");
-            Directory.CreateDirectory(keyRingDirectory);
+            var keyRingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "keyring");
+
+            if (!Directory.Exists(keyRingDirectory))
+                Directory.CreateDirectory(keyRingDirectory);
 
             var directoryInfo = new DirectoryInfo(keyRingDirectory);
             if (directoryInfo.GetFiles("*.key").Length == 0)
