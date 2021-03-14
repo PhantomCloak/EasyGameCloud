@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Identity.Plugin.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 
 namespace Identity.Plugin.Repositories
@@ -13,17 +14,10 @@ namespace Identity.Plugin.Repositories
     public class IdentityUserRepository : IIdentityUserRepository<ApplicationUser>
     {
 
-        private const string strrr =
-            "Server=localhost;" +
-            "Port=5432;" +
-            "Database=identity;" +
-            "User Id=db_admin;" +
-            "Password=badf00d11";
-
-        public IdentityUserRepository()
+        private string _connectionStr { get; set; }
+        public IdentityUserRepository(IConfiguration config)
         {
-            // private readonly IIdentityRoleRepository<IdentityRole> _roleRepository;
-            // _roleRepository = roleRepository;
+            _connectionStr = config["Database:ConnectionString"];
         }
 
         public async Task<ApplicationUser> GetUserFromIdAsync(string userId)
@@ -42,7 +36,7 @@ namespace Identity.Plugin.Repositories
         {
             var plot = PlotSelect(email: email);
             return (await GetUsersAsync(plot.QueryString, plot.Parameters)).FirstOrDefault();
-        }
+         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
@@ -52,7 +46,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersFromClaim(Claim claim)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var users =await connection.QueryAsync<ApplicationUser>(
@@ -64,7 +58,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersFromRole(string roleName)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var users = await connection.QueryAsync<ApplicationUser>(@"select *
@@ -78,7 +72,7 @@ namespace Identity.Plugin.Repositories
         
         private async Task<IEnumerable<ApplicationUser>> GetUsersAsync(string plottedSql, object parameters)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var users = await connection.QueryAsync<ApplicationUser>(plottedSql, parameters);
@@ -89,12 +83,12 @@ namespace Identity.Plugin.Repositories
 
         public async Task<bool> CreateUserAsync(ApplicationUser user)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             await connection.ExecuteAsync(
                 @"insert into identity_user
-                     values(DEFAULT,
+                     values(@userId,
                             @username,
                             @password_hash, 
                             @normalized_username,
@@ -112,6 +106,7 @@ namespace Identity.Plugin.Repositories
                             @deleted_on)",
                 new
                 {
+                    userId = user.Id,
                     username = user.UserName,
                     password_hash = user.PasswordHash,
                     normalized_username = user.NormalizedUserName,
@@ -135,7 +130,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
             
             var parameters = new DynamicParameters();
@@ -181,7 +176,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<bool> DeleteUserAsync(string id)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var parameters = new DynamicParameters();
@@ -194,7 +189,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<IEnumerable<IdentityRole>> GetUserRolesAsync(ApplicationUser user)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var parameters = new DynamicParameters();
@@ -211,7 +206,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var parameters = new DynamicParameters();
@@ -226,7 +221,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task AddRoleToUserAsync(ApplicationUser user, IdentityRole role)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var parameters = new DynamicParameters();
@@ -238,7 +233,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task RemoveRoleFromUser(ApplicationUser user, string roleName)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             // var role = await _roleRepository.GetRoleByNameAsync(roleName);
@@ -252,7 +247,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task AddClaimsToUser(ApplicationUser user, IEnumerable<Claim> claims)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var userClaims = await GetUserClaims(user);
@@ -271,7 +266,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task RemoveClaimFromUser(ApplicationUser user, string claimType)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var parameters = new DynamicParameters();
@@ -283,7 +278,7 @@ namespace Identity.Plugin.Repositories
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersFromClaim(string claimType)
         {
-            await using var connection = new NpgsqlConnection(strrr);
+            await using var connection = new NpgsqlConnection(_connectionStr);
             await connection.OpenAsync();
 
             var users = await connection.QueryAsync<ApplicationUser>(@"select identity_user.* from identity_user

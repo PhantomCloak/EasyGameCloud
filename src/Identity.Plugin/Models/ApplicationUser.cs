@@ -2,7 +2,7 @@
 
 namespace Identity.Plugin.Models
 {
-    public class ApplicationUser
+    public class ApplicationUser : ICloneable
     {
         public string Id { get; set; }
         public string UserName { get; set; }
@@ -10,7 +10,7 @@ namespace Identity.Plugin.Models
         public string Email { get; set; }
         public string NormalizedEmail { get; set; }
         public bool IsEmailVerified { get; set; }
-        
+
         public string PhoneNumber { get; set; }
         public bool IsPhoneNumberVerified { get; set; }
         public string PasswordHash { get; set; }
@@ -32,7 +32,7 @@ namespace Identity.Plugin.Models
         {
             if (email != null)
             {
-                // Email = new ApplicationUserMail(email);
+                Email = email;
             }
         }
 
@@ -46,6 +46,29 @@ namespace Identity.Plugin.Models
             Id = new Guid().ToString();
             UserName = userName;
             CreatedOn = DateTime.UtcNow;
+        }
+
+        public object Clone()
+        {
+            return new ApplicationUser
+            {
+                Id = Id,
+                UserName = UserName,
+                NormalizedUserName = NormalizedUserName,
+                PasswordHash = PasswordHash,
+                SecurityStamp = SecurityStamp,
+                Email = Email,
+                NormalizedEmail = NormalizedEmail,
+                IsEmailVerified = IsEmailVerified,
+                PhoneNumber = PhoneNumber,
+                IsPhoneNumberVerified = IsPhoneNumberVerified,
+                IsTwoFactorEnabled = IsTwoFactorEnabled,
+                AccessFailedCount = AccessFailedCount,
+                LockoutEndDate = LockoutEndDate,
+                IsLockoutEnabled = IsLockoutEnabled,
+                CreatedOn = CreatedOn,
+                DeletedOn = DeletedOn,
+            };
         }
     }
 }

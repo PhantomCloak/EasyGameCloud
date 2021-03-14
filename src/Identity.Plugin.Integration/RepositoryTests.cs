@@ -7,32 +7,30 @@ using Dapper.FluentMap;
 using Identity.Plugin.Models;
 using Identity.Plugin.Models.Mappers;
 using Identity.Plugin.Repositories;
-using IdentityServer.Data;
-using IdentityServer.Data.DapperMapperProfiles;
-using IdentityServer.Repositories;
+using Identity.Plugin.Repositories.ProtectedRepositories;
 using KellermanSoftware.CompareNetObjects;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace IdentityServer.Integration
+namespace Identity.Plugin.Integration
 {
     [TestClass]
     public class RepositoryTests
     {
         private static IContainer _container;
-        private static IdentityRoleRepository wooRee = null;
 
         [ClassInitialize]
         public static void Init(TestContext context)
         {
             var builder = new ContainerBuilder();
+            var configBuilder = new ConfigurationBuilder().AddJsonFile($"settings.json", optional: false);
+            var configurationRoot = configBuilder.Build();
             
             //circular dependency
-            var userRepository = new IdentityUserRepository();
-            var roleRepository = new IdentityRoleRepository();
-
-            wooRee = roleRepository;
-
+            var userRepository = new IdentityUserRepository(configurationRoot);
+            var roleRepository = new IdentityRoleRepository(configurationRoot);
+            
             builder.RegisterInstance(userRepository).As<IIdentityUserRepository<ApplicationUser>>();
             builder.RegisterInstance(roleRepository).As<IIdentityRoleRepository<IdentityRole>>();
             
@@ -47,6 +45,27 @@ namespace IdentityServer.Integration
             });
         }
 
+      [TestMethod]
+        public void Add_Protected_SingleUser_ReturnsSameUser()
+        {
+            // //Arrange 
+            // var keyring = new IdentityDataProtectorKeyRing();
+            // var personalDataProtector = new CustomPersonalDataProtector(keyring);
+            // var userRepository = new IdentityUserRepository();
+            // var protectedUserRepository = new IdentityProtectedUserRepository(userRepository, personalDataProtector);
+            // var compareLogic = new CompareLogic();
+            // compareLogic.Config.IgnoreProperty<ApplicationUser>(x => x.Id);
+            // var testUser = GetTestUser();
+            //
+            // //Act
+            // protectedUserRepository.CreateUserAsync(testUser).Wait();
+            // var returnUser = protectedUserRepository.GetUserFromEmail(testUser.NormalizedEmail).Result;
+            // var result = compareLogic.Compare(testUser, returnUser);
+            //
+            // //Assert
+            // Assert.IsTrue(result.AreEqual,
+            //     $"Added and retrieved users aren't identical diffirences are {string.Join(",", result.Differences)}");
+        }
         [TestMethod]
         public void Add_MultipleRole_GetAddedCount()
         {
@@ -73,14 +92,15 @@ namespace IdentityServer.Integration
         {
             using var resolver = _container.BeginLifetimeScope();
             var roleRepository = resolver.Resolve<IIdentityRoleRepository<IdentityRole>>();
+            
             var compareLogic = new CompareLogic();
             var testRole = GetTestRole();
             
             compareLogic.Config.IgnoreProperty<IdentityRole>(x => x.Id);
             compareLogic.Config.IgnoreProperty<IdentityRole>(x => x.ConcurrencyStamp);
 
-            roleRepository.CreateRoleAsync(testRole, null);
-            var returnRole = roleRepository.GetRoleByNameAsync(testRole.Name).Result;
+            roleRepository.CreateRoleAsync(testRole,null).Wait();
+            var returnRole = roleRepository.GetRoleByNameAsync(testRole.NormalizedName).Result;
 
             var result = compareLogic.Compare(testRole, returnRole);
 
@@ -226,6 +246,7 @@ namespace IdentityServer.Integration
         {
             return new()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "admin",
                 NormalizedName = "ADMIN"
             };

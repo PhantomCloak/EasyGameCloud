@@ -3,6 +3,7 @@ using System.Text;
 using Identity.Plugin.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Identity.Plugin
 {
@@ -10,9 +11,9 @@ namespace Identity.Plugin
     {
         private readonly PasswordHasherOptions _options;
 
-        public CustomPasswordHasher(PasswordHasherOptions options)
+        public CustomPasswordHasher(IOptions<PasswordHasherOptions>  options)
         {
-            _options = options;
+            _options =  options?.Value ?? new PasswordHasherOptions();
         }
 
         public string HashPassword(ApplicationUser user, string password)

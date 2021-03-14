@@ -10,7 +10,7 @@ namespace CustomerService.Controllers
     [Authorize]
     public class Endpoints
     {
-        public Task<IActionResult> CreateCustomer(string userName,)
+        public Task<IActionResult> CreateCustomer(string userName)
         {
             
             return null;

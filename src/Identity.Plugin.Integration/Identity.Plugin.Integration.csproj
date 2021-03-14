@@ -20,4 +20,8 @@
       <ProjectReference Include="..\IdentityServer\IdentityServer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="bin\Debug\net5.0\settings.json" />
+    </ItemGroup>
+
 </Project>

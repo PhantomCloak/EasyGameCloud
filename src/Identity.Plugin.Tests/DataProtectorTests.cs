@@ -8,11 +8,6 @@ namespace Identity.Plugin.Tests
 {
     public class Tests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         public void Encrypt_Decrypt_Same_Text_Are_Equal()
         {

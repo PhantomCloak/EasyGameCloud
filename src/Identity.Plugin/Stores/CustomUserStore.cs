@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Identity.Plugin.Models;
 using Identity.Plugin.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Identity.Plugin.Stores
 {
@@ -27,10 +28,10 @@ namespace Identity.Plugin.Stores
         public IdentityOptions Options { get; set; }
 
         public CustomUserStore(
-            IIdentityUserRepository<TUser> userRepository, IdentityOptions options)
+            IIdentityUserRepository<TUser> userRepository, IOptions<IdentityOptions> optionsAccessor)
         {
             _userRepository = userRepository;
-            Options = options;
+            Options = optionsAccessor?.Value ?? new IdentityOptions();
         }
 
         public void Dispose()
