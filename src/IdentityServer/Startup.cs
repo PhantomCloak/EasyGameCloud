@@ -1,8 +1,5 @@
-using Identity.Plugin.Models;
-using Identity.Plugin.Repositories;
-using Identity.Plugin.Stores;
+using Identity.Plugin;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +19,7 @@ namespace IdentityServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IIdentityUserRepository<ApplicationUser>,IdentityUserRepository>();
-
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddUserStore<CustomUserStore<ApplicationUser>>();
-
-            services.AddScoped<UserManager<ApplicationUser>>();
-            
+            services.AddCustomIdentity();
             services.AddControllersWithViews();
         }
 
