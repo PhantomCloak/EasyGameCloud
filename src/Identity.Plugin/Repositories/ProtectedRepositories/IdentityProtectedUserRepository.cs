@@ -22,7 +22,7 @@ namespace Identity.Plugin.Repositories.ProtectedRepositories
 
         public async Task<ApplicationUser> GetUserFromIdAsync(string id)
         {
-            var result = await _instance.GetUserFromEmail(id);
+            var result = await _instance.GetUserFromIdAsync(id);
 
             result.Email = _personalDataProtector.Unprotect(result.Email);
             result.UserName = _personalDataProtector.Unprotect(result.UserName);
@@ -44,6 +44,11 @@ namespace Identity.Plugin.Repositories.ProtectedRepositories
         {
             var result = await _instance.GetUserFromEmail(email);
 
+            if (result == null)
+            {
+                return null;
+            }
+            
             result.Email = _personalDataProtector.Unprotect(result.Email);
             result.UserName = _personalDataProtector.Unprotect(result.UserName);
 

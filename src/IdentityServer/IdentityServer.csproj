@@ -20,8 +20,6 @@
 
     <ItemGroup>
       <Folder Include="Data\DapperMapperProfiles" />
-      <Folder Include="Repositories" />
-      <Folder Include="Stores" />
     </ItemGroup>
 
     <ItemGroup>

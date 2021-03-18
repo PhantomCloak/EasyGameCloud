@@ -66,6 +66,11 @@ namespace Identity.Plugin
 
         public string Protect(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                return string.Empty;
+            }
+
             ProtectorAlgorithmHelper.GetAlgorithms(
                 _defaultAlgorithm,
                 out var encryptingAlgorithm,
@@ -106,6 +111,11 @@ namespace Identity.Plugin
 
         public string Unprotect(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                return string.Empty;
+            }
+    
             var blob = new CryptoBlob(data);
 
             ProtectorAlgorithmHelper.GetAlgorithms(

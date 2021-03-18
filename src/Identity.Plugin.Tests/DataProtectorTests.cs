@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace Identity.Plugin.Tests
 {
-    public class Tests
+    public class CryptoTests
     {
         [Test]
         public void Encrypt_Decrypt_Same_Text_Are_Equal()

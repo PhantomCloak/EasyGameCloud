@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Autofac;
 using Identity.Plugin.Models;
 using Identity.Plugin.Repositories;
+using Identity.Plugin.Repositories.ProtectedRepositories;
 using Identity.Plugin.Stores;
-using Identity.Plugin.Tests.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NUnit.Framework;
+using Serilog;
 using Assert = NUnit.Framework.Assert;
+using ILogger = Serilog.ILogger;
 
-namespace Identity.Plugin.Tests
+namespace Identity.Plugin.Integration
 {
     public class UserManagerTest
     {
@@ -32,9 +30,14 @@ namespace Identity.Plugin.Tests
         [Test]
         public void Create_User_Get_Same_User()
         {
-            var userManager = (UserManager<ApplicationUser>) _provider.GetRequiredService(typeof(UserManager<ApplicationUser>));
+            var userName = "Bob";
+            var email = "bob@mail.com";
 
-            var result = userManager.CreateAsync(new ApplicationUser("Bob", "bob@mail.com")).Result;
+            var userManager =
+                (CustomUserManager<ApplicationUser>) _provider.GetRequiredService(
+                    typeof(CustomUserManager<ApplicationUser>));
+
+            var result = userManager.CreateAsync(new ApplicationUser(userName, email)).Result;
 
             if (!result.Succeeded)
             {
@@ -48,6 +51,11 @@ namespace Identity.Plugin.Tests
                 Assert.Fail("User from mail has failed.");
             }
 
+            if (userFromMail.UserName != userName || userFromMail.Email != email)
+            {
+                Assert.Fail("Username or email is corrupted.");
+            }
+            
             var userFromUsername = userManager.FindByNameAsync("Bob").Result;
 
             if (userFromUsername == null)
@@ -55,8 +63,18 @@ namespace Identity.Plugin.Tests
                 Assert.Fail("User from name has failed.");
             }
 
+            if (userFromUsername.UserName != userName || userFromUsername.Email != email)
+            {
+                Assert.Fail("Username or email is corrupted.");
+            }
+            
             var userFromId = userManager.FindByIdAsync(userFromMail.Id).Result;
 
+            if (userFromId.UserName != userName || userFromId.Email != email)
+            {
+                Assert.Fail("Username or email is corrupted.");
+            }
+            
             if (userFromId == null)
             {
                 Assert.Fail("User from Id has failed.");
@@ -68,11 +86,10 @@ namespace Identity.Plugin.Tests
         [TearDown]
         public void Cleanup()
         {
-            var userRepository =
-                (IdentityUserRepository) _provider.GetRequiredService(typeof(IIdentityUserRepository<ApplicationUser>));
-
+            var userRepository = (IIdentityUserRepository<ApplicationUser>)_provider.GetRequiredService(typeof(IIdentityUserRepository<ApplicationUser>));
+            
             var users = userRepository.GetUsersAsync().Result;
-
+            
             foreach (var user in users)
             {
                 userRepository.DeleteUserAsync(user.Id);
@@ -93,6 +110,12 @@ namespace Identity.Plugin.Tests
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
 
+            var log = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            _services.AddSingleton<ILogger>(log);
+            
             _services.AddSingleton<IConfiguration>(configuration);
             _services.Configure<IdentityOptions>(options =>
             {
@@ -110,7 +133,10 @@ namespace Identity.Plugin.Tests
 
             _services.AddScoped<IdentityErrorDescriber>();
             _services.AddSingleton(new Mock<ILogger<UserManager<ApplicationUser>>>().Object);
+            
             _services.AddScoped<IIdentityUserRepository<ApplicationUser>, IdentityUserRepository>();
+            _services.Decorate<IIdentityUserRepository<ApplicationUser>, IdentityProtectedUserRepository>();
+            
             _services.AddScoped<IIdentityRoleRepository<IdentityRole>, IdentityRoleRepository>();
             _services.AddScoped<IPasswordHasher<ApplicationUser>, CustomPasswordHasher>();
             _services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
@@ -118,7 +144,8 @@ namespace Identity.Plugin.Tests
             _services.AddScoped<ILookupProtectorKeyRing, IdentityDataProtectorKeyRing>();
             _services.AddScoped<ILookupProtector, IdentityLookupProtector>();
             _services.AddScoped<IPersonalDataProtector, CustomPersonalDataProtector>();
-            _services.AddScoped<UserManager<ApplicationUser>>();
+            _services.AddScoped<Hasher>();
+            _services.AddScoped<CustomUserManager<ApplicationUser>>();
 
             _provider = _services.BuildServiceProvider();
         }
