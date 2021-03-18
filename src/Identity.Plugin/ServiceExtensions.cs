@@ -2,6 +2,7 @@ using Identity.Plugin.Models;
 using Identity.Plugin.Repositories;
 using Identity.Plugin.Repositories.ProtectedRepositories;
 using Identity.Plugin.Stores;
+using IdentityServer4;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,16 @@ namespace Identity.Plugin
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<ProfileService>();
+        }
+
+        public static void AddGoogle(this IServiceCollection instance,string clientId,string clientSecret)
+        {
+            instance.AddAuthentication().AddGoogle(options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+                });
         }
     }
 }
