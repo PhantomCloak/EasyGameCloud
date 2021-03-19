@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
-using Moq;
 using NUnit.Framework;
 
 namespace Identity.Plugin.Tests

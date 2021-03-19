@@ -7,7 +7,6 @@ using Dapper.FluentMap;
 using Identity.Plugin.Models;
 using Identity.Plugin.Models.Mappers;
 using Identity.Plugin.Repositories;
-using Identity.Plugin.Repositories.ProtectedRepositories;
 using KellermanSoftware.CompareNetObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

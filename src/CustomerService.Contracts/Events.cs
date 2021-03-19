@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CustomerService.Contracts
+﻿namespace CustomerService.Contracts
 {
     public class CustomerCreated
     {

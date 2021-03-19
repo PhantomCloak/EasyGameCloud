@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyGameCloudClient
+﻿namespace EasyGameCloudClient
 {
     public static class AuthenticationService
     {

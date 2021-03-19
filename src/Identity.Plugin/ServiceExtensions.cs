@@ -3,9 +3,9 @@ using Identity.Plugin.Repositories;
 using Identity.Plugin.Repositories.ProtectedRepositories;
 using Identity.Plugin.Stores;
 using IdentityServer4;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Identity.Plugin
 {
@@ -25,6 +25,13 @@ namespace Identity.Plugin
             instance.AddScoped<IPersonalDataProtector, CustomPersonalDataProtector>();
             instance.AddScoped<Hasher>();
             instance.AddScoped<CustomUserManager<ApplicationUser>>();
+            
+            instance.AddScoped<IProfileService, ProfileService>();
+            
+            instance.AddIdentity<ApplicationUser,IdentityRole>()
+                .AddUserStore<CustomUserStore<ApplicationUser>>()
+                .AddRoleStore<CustomRoleStore>();
+            
             instance.AddIdentityServer(options =>
                 {
                     options.Events.RaiseErrorEvents = true;
