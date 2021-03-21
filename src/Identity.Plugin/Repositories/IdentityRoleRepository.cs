@@ -12,8 +12,7 @@ namespace Identity.Plugin.Repositories
 {
     public class IdentityRoleRepository : IIdentityRoleRepository<IdentityRole>
     {
-        private readonly string _connectionStr =
-            "Server=localhost;Port=5432;Database=identity;User Id=db_admin;Password=badf00d11";
+        private readonly string _connectionStr;
 
         public IdentityRoleRepository(IConfiguration configuration)
         {

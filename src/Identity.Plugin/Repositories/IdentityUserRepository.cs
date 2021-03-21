@@ -106,7 +106,7 @@ namespace Identity.Plugin.Repositories
                             @deleted_on)",
                 new
                 {
-                    userId = user.Id,
+                    userId = "DEFAULT",
                     username = user.UserName,
                     password_hash = user.PasswordHash,
                     normalized_username = user.NormalizedUserName,

@@ -33,6 +33,8 @@ namespace Identity.Plugin.Repositories.ProtectedRepositories
         {
             var result = await _instance.GetUserFromUsernameAsync(userName);
 
+            if (result == null) return null;
+            
             result.Email = _personalDataProtector.Unprotect(result.Email);
             result.UserName = _personalDataProtector.Unprotect(result.UserName);
 
