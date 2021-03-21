@@ -30,7 +30,10 @@ namespace Identity.Plugin
             
             instance.AddIdentity<ApplicationUser,IdentityRole>()
                 .AddUserStore<CustomUserStore<ApplicationUser>>()
-                .AddRoleStore<CustomRoleStore>();
+                .AddRoleStore<CustomRoleStore>()
+                .AddDefaultUI();
+
+            // instance.AddScoped<SignInManager<ApplicationUser>>();
             
             instance.AddIdentityServer(options =>
                 {
